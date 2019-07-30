@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>OA 系统</title>
+    <link rel="stylesheet" href="/layui/css/layui.css">
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+    <div class="layui-header">
+        <div class="layui-logo">OA 系统</div>
+        <!-- 头部区域（可配合layui已有的水平导航） -->
+        <ul class="layui-nav layui-layout-right">
+            <li class="layui-nav-item">
+                <a href="javascript:;">
+                    <img src="http://t1.27270.com/uploads/tu/201805/86/27d145024a.jpg" class="layui-nav-img">
+                    <span id="userName"></span>
+                </a>
+                <dl class="layui-nav-child">
+                    <dd><a href="">基本资料</a></dd>
+                    <dd><a href="">安全设置</a></dd>
+                </dl>
+            </li>
+            <li class="layui-nav-item"><a href="javascript:;" id="logout">退了</a></li>
+        </ul>
+    </div>
+
+    <div class="layui-side layui-bg-black">
+        <div class="layui-side-scroll">
+            <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+            <ul class="layui-nav layui-nav-tree" lay-filter="test">
+                <li class="layui-nav-item layui-nav-itemed">
+                    <a href="javascript:;">首页</a>
+                </li>
+                <li class="layui-nav-item">
+                    <a href="javascript:;">系统管理</a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="/page/user/user_list.html" target="main">员工管理</a></dd>
+                        <dd><a href="/page/role/user_list.html" target="main">角色管理</a></dd>
+                        <dd><a href="/page/dept/user_list.html" target="main">部门管理</a></dd>
+                    </dl>
+                </li>
+                <li class="layui-nav-item"><a href="">云市场</a></li>
+                <li class="layui-nav-item"><a href="">发布商品</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="layui-body">
+        <!-- 内容主体区域 -->
+        <div class="layui-tab" lay-filter="demo">
+            <ul class="layui-tab-title">
+                <li class="layui-this" id="tab" style="margin-left: 10px;">首页</li>
+            </ul>
+            <div class="layui-tab-content">
+                <div class="layui-tab-item layui-show">
+                    <div class="layui-main" id="main">
+                        <iframe src="welcome.html" frameborder="0" style="width: 100%;" name="main" id="demoAdmin"
+                                ></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-footer">
+        <!-- 底部固定区域 -->
+        © www.rimionline.com
+    </div>
+</div>
+<script src="/layui/layui.js"></script>
+<script>
+    //JavaScript代码区域
+    layui.use(['element','layer','jquery'], function () {
+        var $ = layui.jquery;
+        var layer = layui.layer;
+        var element = layui.element;
+        //通过SessionId获取当前登录人信息
+        $.ajax({
+            url:'/page/user/getNowUser' //实际使用请改成服务端真实接口
+            ,type:'get'
+            ,success:function(res){
+                if (res.code == 200) {
+                   $("#userName").html(res.user.name);
+                }
+            }
+        });
+
+        // 退出
+        $("#logout").on('click', function () {
+            layer.confirm('你确定你退出吗？', {
+                time: 0 //不自动关闭
+                , btn: ['确定', '取消']
+                , yes: function (index) {
+                    $.get("/page/user/logout").done(function (data){
+                           // 退出成功，跳转到登录页面
+                            location.href = "/"
+                    })
+                    layer.close(index);
+                }
+            });
+        });
+
+        $(function(){
+            changeFrameHeight();
+        });
+
+    });
+
+
+    function changeFrameHeight(){
+        var ifm= document.getElementById("demoAdmin");
+        ifm.height=document.documentElement.clientHeight-190;
+    }
+    window.onresize=function(){ 
+        changeFrameHeight();
+    }
+
+
+</script>
+</body>
+</html>

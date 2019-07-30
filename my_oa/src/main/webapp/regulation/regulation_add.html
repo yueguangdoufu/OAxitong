@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>upload</title>
+    <link rel="stylesheet" href="../layui/css/layui.css" media="all">
+</head>
+<body>
+
+<form class="layui-form" action="">
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">文件地址</label>
+        <div class="layui-input-inline">
+            <input type="text" name="file2" placeholder="请输入文件地址" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button type="button" class="layui-btn" id="test1">
+                <i class="layui-icon">&#xe67c;</i>上传文件
+            </button>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-submit="" lay-filter="demo1">立即提交</button>
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+    </div>
+</form>
+
+<script src="../layui/layui.js"></script>
+<script>
+    layui.use(['form','upload'], function(){
+        var form = layui.form
+            ,layer = layui.layer
+            ,$ = layui.$;
+        var upload = layui.upload;
+
+        //执行实例
+        var uploadInst = upload.render({
+            elem: '#test1' //绑定元素
+            ,url: '/regulationAdd' //上传接口
+            ,done: function(res){
+                //上传完毕回调
+                if (res == 200) {
+                    //登入成功的提示与跳转
+                    layer.msg('添加成功', {
+                        offset: '15px'
+                        , icon: 1
+                        , time: 1000
+                    }, function () {
+                    });
+                }else {
+                    layer.msg("添加失败", {
+                        offset: '15px'
+                        ,icon: 1
+                        ,time: 1000
+                    });
+                }
+
+            }
+            ,error: function(){
+                //请求异常回调
+                layer.msg("添加失败", {
+                    offset: '15px'
+                    ,icon: 1
+                    ,time: 1000
+                });
+            }
+        });
+
+        //提交
+        form.on('submit(demo1)', function(obj){
+            $.ajax({
+                url:'/regulationAdd' //实际使用请改成服务端真实接口
+                ,data:obj.field
+                ,type:'post'
+                ,success:function(res){
+                    if (res == 200) {
+                        //登入成功的提示与跳转
+                        layer.msg('添加成功', {
+                            offset: '15px'
+                            ,icon: 1
+                            ,time: 1000
+                        }, function(){
+                            location.href = "regulation.html"; //展现用户信息
+                        });
+                    } else {
+                        layer.msg("添加失败", {
+                            offset: '15px'
+                            ,icon: 1
+                            ,time: 1000
+                        });
+                    }
+                }
+            });
+            return false;
+        });
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>layui</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="layui/css/layui.css"  media="all">
+    <!-- 注意：如果你直接复制所有代码到本地，上述css路径需要改成你本地的 -->
+</head>
+<body>
+
+<form class="layui-form" action="">
+    <input type="hidden" name="id" id="hidenId">
+    <div class="layui-form-item">
+        <label class="layui-form-label">用户名</label>
+        <div class="layui-input-inline">
+            <input type="text" name="username" value="${user.username}" lay-verify="required|title" autocomplete="off" placeholder="请输入用户名" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">性别</label>
+        <div class="layui-input-block" id="view">
+            <input type="radio" name="sex" value="1" title="男">
+            <input type="radio" name="sex" value="0" title="女">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">年龄</label>
+        <div class="layui-input-inline">
+            <input type="number" name="age" min="0" value="${user.age}" placeholder="请输入年龄" lay-verify="number" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">QQ</label>
+        <div class="layui-input-inline">
+            <input type="text" name="qq" value="${user.qq}" lay-verify="number" placeholder="请输入QQ号" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">联系方式</label>
+        <div class="layui-input-inline">
+            <input type="tel" name="telephone" value="${user.telephone}" lay-verify="required|phone" placeholder="请输入手机号码" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">邮箱</label>
+        <div class="layui-input-inline">
+            <input type="text" name="email" value="${user.email}" placeholder="请输入邮箱地址" lay-verify="email" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">地址</label>
+        <div class="layui-input-inline">
+            <input type="text" name="address" value="${user.address}" placeholder="请输入地址" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">工作</label>
+        <div class="layui-input-inline">
+            <input type="text" name="job" value="${user.job}" placeholder="请输入工作" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-submit="" lay-filter="demo1">立即提交</button>
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+    </div>
+</form>
+<script>
+    //当页面加载时，就会执行该部分代码
+    //通过截取当前页面的URL地址获取到 ID
+    var id=location.search.substring(1);
+    //将ID这项参数放在表单中
+    document.getElementById("hidenId").value=id;
+</script>
+
+<script src="/layui/layui.js" charset="utf-8"></script>
+<!-- 注意：如果你直接复制所有代码到本地，上述js路径需要改成你本地的 -->
+<script>
+    layui.use(['form','laytpl'], function(){
+        var form = layui.form
+            ,layer = layui.layer
+            ,$ = layui.$;
+        var laytpl = layui.laytpl;
+
+        //提交
+        form.on('submit(demo1)', function(obj){
+            $.ajax({
+                url:'/userUpdate' //实际使用请改成服务端真实接口
+                ,data:obj.field
+                ,type:'post'
+                ,success:function(res){
+                    if (res == 200) {
+                        //登入成功的提示与跳转
+                        layer.msg('修改成功', {
+                            offset: '15px'
+                            ,icon: 1
+                            ,time: 1000
+                        }, function(){
+                            location.href = "user_list.html"; //展现用户信息
+                        });
+                    } else {
+                        layer.msg("修改失败", {
+                            offset: '15px'
+                            ,icon: 1
+                            ,time: 1000
+                        });
+                    }
+                }
+            });
+            return false;
+        });
+
+    });
+</script>
+
+</body>
+</html>
