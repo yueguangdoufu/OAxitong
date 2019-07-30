@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>layui</title>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="stylesheet" href="/layui/css/layui.css"  media="all">
+  <!-- 注意：如果你直接复制所有代码到本地，上述css路径需要改成你本地的 -->
+</head>
+<body>  
+
+<div class="layui-btn-group demoTable">
+  <button class="layui-btn" data-type="getCheckData">获取选中行数据</button>
+  <button class="layui-btn" data-type="getCheckLength">获取选中数目</button>
+  <button class="layui-btn" data-type="isAll">验证是否全选</button>
+  <button class="layui-btn" onclick="save()">添加</button>
+
+</div>
+ <script>
+   function save() {
+       //跳转到添加页面
+       location.href="/page/role/user_add.html";
+   }
+
+ </script>
+<table class="layui-table" lay-data="{ url:'/page/role/list', page:false, id:'idTest'}" lay-filter="demo">
+  <thead>
+    <tr>
+      <th lay-data="{type:'checkbox', fixed: 'left'}"></th>
+      <th lay-data="{field:'id',  sort: true, fixed: true}">ID</th>
+      <th lay-data="{field:'name'}">角色名</th>
+      <th lay-data="{field:'remark' }">备注</th>
+      <th lay-data="{fixed: 'right', width:178, align:'center', toolbar: '#barDemo'}"></th>
+    </tr>
+  </thead>
+</table>
+ 
+<script type="text/html" id="barDemo">
+  <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+  <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+               
+          
+<script src="/layui/layui.js" charset="utf-8"></script>
+<!-- 注意：如果你直接复制所有代码到本地，上述js路径需要改成你本地的 -->
+<script>
+layui.use(['table','jquery'], function(){
+  var table = layui.table;
+  //添加插件 访问后台servlet需要的插件
+  var $=layui.jquery;
+  //监听表格复选框选择
+  table.on('checkbox(demo)', function(obj){
+    console.log(obj)
+  });
+  //监听工具条
+  table.on('tool(demo)', function(obj){
+      //代表当前行的数据
+         var data = obj.data;
+    if(obj.event === 'detail'){
+      layer.msg('ID：'+ data.id + ' 的查看操作');
+    } else if(obj.event === 'del'){
+      layer.confirm('真的删除行么', function(index){
+        // ajax 函数 、方法
+          $.ajax({
+              type:"get",
+              url:"/page/role/del?id="+data.id,
+              success:function (msg) { //当服务器处理完成后 执行该函数  msg代表的就是服务器返回的数据
+                  if(msg==200){
+                      //
+                      layer.msg("删除成功");
+                      //重新加载表格
+                      table.reload("idTest");
+                  }else{
+                      //
+                      layer.msg("删除失败");
+                  }
+              }
+          });
+
+        layer.close(index);
+      });
+    } else if(obj.event === 'edit'){
+        //获取到当前行的ID
+        var d=data.id;
+        //跳转到修改页面
+        window.location.href="/page/role/user_edit.html?"+d;
+    }
+  });
+  
+  var $ = layui.$, active = {
+    getCheckData: function(){ //获取选中数据
+      var checkStatus = table.checkStatus('idTest')
+      ,data = checkStatus.data;
+      layer.alert(JSON.stringify(data));
+    }
+    ,getCheckLength: function(){ //获取选中数目
+      var checkStatus = table.checkStatus('idTest')
+      ,data = checkStatus.data;
+      layer.msg('选中了：'+ data.length + ' 个');
+    }
+    ,isAll: function(){ //验证是否全选
+      var checkStatus = table.checkStatus('idTest');
+      layer.msg(checkStatus.isAll ? '全选': '未全选')
+    }
+  };
+  
+  $('.demoTable .layui-btn').on('click', function(){
+    var type = $(this).data('type');
+    active[type] ? active[type].call(this) : '';
+  });
+});
+</script>
+
+</body>
+</html>

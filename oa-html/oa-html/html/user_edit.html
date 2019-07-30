@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>layui</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../layui/css/layui.css"  media="all">
+    <!-- 注意：如果你直接复制所有代码到本地，上述css路径需要改成你本地的 -->
+</head>
+<body>
+
+<form class="layui-form" action="">
+    <input type="hidden" name="id" value="${user.id}">
+    <div class="layui-form-item">
+        <label class="layui-form-label">用户名</label>
+        <div class="layui-input-inline">
+            <input type="text" name="username" value="${user.username}" lay-verify="required|title" autocomplete="off" placeholder="请输入用户名" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">性别</label>
+        <div class="layui-input-block" id="view">
+            <input type="radio" name="sex" value="男" title="男"
+            <c:if test="${user.sex == '男'}"> checked </c:if>
+            >
+            <input type="radio" name="sex" value="女" title="女"
+            <c:if test="${user.sex == '女'}"> checked </c:if>
+            >
+            <input type="radio" name="sex" value="保密" title="保密"
+            <c:if test="${user.sex == '保密'}"> checked </c:if>
+            >
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">年龄</label>
+        <div class="layui-input-inline">
+            <input type="number" name="age" min="0" value="${user.age}" placeholder="请输入年龄" lay-verify="number" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">QQ</label>
+        <div class="layui-input-inline">
+            <input type="text" name="qq" value="${user.qq}" lay-verify="number" placeholder="请输入QQ号" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">联系方式</label>
+        <div class="layui-input-inline">
+            <input type="tel" name="telephone" value="${user.telephone}" lay-verify="required|phone" placeholder="请输入手机号码" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">邮箱</label>
+        <div class="layui-input-inline">
+            <input type="text" name="email" value="${user.email}" placeholder="请输入邮箱地址" lay-verify="email" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">地址</label>
+        <div class="layui-input-inline">
+            <input type="text" name="address" value="${user.address}" placeholder="请输入地址" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">工作</label>
+        <div class="layui-input-inline">
+            <input type="text" name="job" value="${user.job}" placeholder="请输入工作" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-submit="" lay-filter="demo1">立即提交</button>
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+    </div>
+</form>
+
+
+<script src="/layui/layui.js" charset="utf-8"></script>
+<!-- 注意：如果你直接复制所有代码到本地，上述js路径需要改成你本地的 -->
+<script>
+    layui.use(['form','laytpl'], function(){
+        var form = layui.form
+            ,layer = layui.layer
+            ,$ = layui.$;
+        var laytpl = layui.laytpl;
+
+        //自定义验证规则
+        form.verify({
+            title: function(value){
+                if(value.length < 5){
+                    return '标题至少得5个字符啊';
+                }
+            }
+        });
+
+        //监听提交
+        form.on('submit(demo1)', function(data){
+            // layer.alert(JSON.stringify(data.field), {
+            //     title: '最终的提交信息'
+            // });
+            $.post('/user/update',data.field,function(res){
+                if (res.code == 0){
+                    layer.open({
+                        type:0,
+                        title:'消息',
+                        content:res.msg+'，3后跳转',
+                        closeBtn: 0,
+                        time: 3000,
+                        end:function () {
+                            location.href = '/user/list';
+                        }
+                    });
+                } else {
+                    layer.alert(res.msg);
+                }
+            });
+
+            return false;
+        });
+
+    });
+</script>
+
+</body>
+</html>
